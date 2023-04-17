@@ -81,14 +81,12 @@ class WindowGame(customtkinter.CTk):
         self.player.clear_hand()
         self.display_bet_widgets()
         self.player.set_points(0)
-        self.points_player_label.configure(text=str(f'Points\n{self.player.get_points()}'))
+        self.points_player_label.configure(text=f'Points\n{self.player.get_points()}')
         for i in range(len(self.player_cards_label)):
             self.player_cards_label[i].destroy()
         self.player_cards_label.clear()
-
-        # self.player.add_card(2, self.deck)
-        # self.player.add_points()
-        # self.display_player_cards()
+        self.player.set_money_in_bet(0)
+        self.money_in_bet_label.configure(text=f'Money in bet\n{self.player.get_money_in_bet()}')
 
     def hit_button_callback(self):
         self.player.add_card(1, self.deck)
@@ -165,6 +163,9 @@ class WindowGame(customtkinter.CTk):
         self.surrender_button.place_forget()
 
     def display_player_cards(self):
+        for i in range(len(self.player_cards_label)):
+            self.player_cards_label[i].destroy()
+        self.player_cards_label.clear()
         image_cards = self.create_image_player_cards_label()
         relx = 0.17
         for i in range(len(image_cards)):
