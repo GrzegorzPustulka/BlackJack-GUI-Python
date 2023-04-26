@@ -14,7 +14,10 @@ class Rules:
         return blackJack
 
     def checkBurn(self, points):
-        if points > 21:
-            return True
-        else:
-            return False
+        return points > 21
+
+    def check_win(self, player_points, dealer_points):
+        return player_points > dealer_points
+
+    def check_draw(self, player_points, dealer_points):
+        return player_points == dealer_points

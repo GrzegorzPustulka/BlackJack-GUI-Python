@@ -85,6 +85,7 @@ class WindowGame(customtkinter.CTk):
         self.display_bet_widgets()
         self.player.set_points(0)
         self.dealer.set_points(0)
+        self.current_money_label.configure(text=f'Current Money\n{self.player.get_current_money()}')
         self.points_player_label.configure(text=f'Points\n{self.player.get_points()}')
         self.points_dealer_label.configure(text=f'Points\n{self.dealer.get_points()}')
 
@@ -117,19 +118,43 @@ class WindowGame(customtkinter.CTk):
     def double_down_button_callback(self):
         self.player.set_current_money(self.player.get_current_money() - self.player.get_money_in_bet())
         self.current_money_label.configure(text=f'Current Money\n{self.player.get_current_money()}')
-        self.player.set_money_in_bet(self.player.get_money_in_bet()*2)
+        self.player.set_money_in_bet(self.player.get_money_in_bet() * 2)
         self.money_in_bet_label.configure(text=f'Money in bet\n{self.player.get_money_in_bet()}')
         self.player.add_card(1, self.deck)
+        self.display_player_cards()
         self.player.add_points()
         self.points_player_label.configure(text=f'Points\n{self.player.get_points()}')
-        self.display_player_cards()
-        if self.rules.checkBurn(self.player.get_points()):
-            self.hide_bet_option_widgets()
-            self.new_game_button.place(relx=0.79, rely=0.94, anchor=tkinter.CENTER)
 
-        # sprawdzenie remisu
-        # sprawdzenie black Jack
-        #
+        blackjack_player = self.rules.check_BlackJack(self.player)
+        blackjack_dealer = self.rules.check_BlackJack(self.dealer)
+
+        if self.rules.checkBurn(self.player.get_points()):
+            print('Player burn')
+        else:
+            self.dealer.add_card_over_16(self.deck)
+            self.dealer.add_points()
+            self.display_dealer_cards()
+            self.points_dealer_label.configure(text=f'Points\n{self.dealer.get_points()}')
+            if blackjack_player and blackjack_dealer is False:
+                self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet() * 4.5)
+                print('Black Jack!!!')
+            elif blackjack_player and blackjack_dealer:
+                self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet())
+                print('Remis')
+            elif self.rules.checkBurn(self.dealer.get_points()):
+                self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet() * 4)
+                print('DEALER BURN')
+            elif self.rules.check_win(self.player.get_points(), self.dealer.get_points()):
+                self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet() * 4)
+                print('WIN')
+            elif self.rules.check_draw(self.player.get_points(), self.dealer.get_points()):
+                self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet() * 2)
+                print('DRAW')
+            else:
+                print('LOSE')
+
+        self.hide_bet_option_widgets()
+        self.new_game_button.place(relx=0.79, rely=0.94, anchor=tkinter.CENTER)
 
     def stand_button_callback(self):
         self.dealer.add_card_over_16(self.deck)
@@ -139,6 +164,27 @@ class WindowGame(customtkinter.CTk):
 
         blackjack_player = self.rules.check_BlackJack(self.player)
         blackjack_dealer = self.rules.check_BlackJack(self.dealer)
+
+        if blackjack_player and blackjack_dealer is False:
+            self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet() * 2.5)
+            print('Black Jack!!!')
+        elif blackjack_player and blackjack_dealer:
+            self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet())
+            print('Remis')
+        elif self.rules.checkBurn(self.dealer.get_points()):
+            self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet() * 2)
+            print('DEALER BURN')
+        elif self.rules.check_win(self.player.get_points(), self.dealer.get_points()):
+            self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet() * 2)
+            print('WIN')
+        elif self.rules.check_draw(self.player.get_points(), self.dealer.get_points()):
+            self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet())
+            print('DRAW')
+        else:
+            print('LOSE')
+
+        self.hide_bet_option_widgets()
+        self.new_game_button.place(relx=0.79, rely=0.94, anchor=tkinter.CENTER)
 
     def bet_button_callback(self):
         self.player.add_card(2, self.deck)
@@ -195,9 +241,10 @@ class WindowGame(customtkinter.CTk):
     def create_image_player_cards_label(self):
         image_cards = []
         for i in range(len(self.player.hand_deck)):
-            image_cards.append(customtkinter.CTkImage(light_image=Image.open(self.deck.cards_image[self.player.hand_deck[i]]),
-                                                      dark_image=Image.open(self.deck.cards_image[self.player.hand_deck[i]]),
-                                                      size=(60, 87)))
+            image_cards.append(
+                customtkinter.CTkImage(light_image=Image.open(self.deck.cards_image[self.player.hand_deck[i]]),
+                                       dark_image=Image.open(self.deck.cards_image[self.player.hand_deck[i]]),
+                                       size=(60, 87)))
         return image_cards
 
     def display_dealer_cards(self):
@@ -213,10 +260,11 @@ class WindowGame(customtkinter.CTk):
 
     def create_image_dealer_cards_label(self):
         image_cards = []
-        for i in range(len(self.dealer.deck)):
-            image_cards.append(customtkinter.CTkImage(light_image=Image.open(self.deck.cards_image[self.dealer.deck[i]]),
-                                                      dark_image=Image.open(self.deck.cards_image[self.dealer.deck[i]]),
-                                                      size=(60, 87)))
+        for i in range(len(self.dealer.hand_deck)):
+            image_cards.append(
+                customtkinter.CTkImage(light_image=Image.open(self.deck.cards_image[self.dealer.hand_deck[i]]),
+                                       dark_image=Image.open(self.deck.cards_image[self.dealer.hand_deck[i]]),
+                                       size=(60, 87)))
         return image_cards
 
     def create_card_label(self, image_card):
@@ -270,7 +318,6 @@ class WindowGame(customtkinter.CTk):
                                        height=32,
                                        text="Hit",
                                        command=self.hit_button_callback)
-
 
     def create_chip_button(self, value):
         if value == '10':
