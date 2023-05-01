@@ -21,3 +21,14 @@ class Rules:
 
     def check_draw(self, player_points, dealer_points):
         return player_points == dealer_points
+
+    def check_BlackJack_split(self, player):
+        blackJack = False
+        if player.get_points_split() == 21 and len(player.second_deck) == 2:
+            blackJack = True
+        elif player.get_points_split() == 21 and len(player.second_deck) == 3:
+            for card in player.second_deck:
+                if 'Seven' not in card:
+                    break
+            blackJack = True
+        return blackJack

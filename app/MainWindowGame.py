@@ -15,6 +15,9 @@ class WindowGame(customtkinter.CTk):
         self.player_cards_label_split = []
         self.burn = False
         self.burn_split = False
+        self.stand = False
+        self.stand_split = False
+        self.split = False
         self.player = Player()
         self.dealer = Dealer()
         self.rules = Rules()
@@ -96,6 +99,9 @@ class WindowGame(customtkinter.CTk):
         self.money_in_bet_label.configure(text=f'Money in bet\n{self.player.get_money_in_bet()}')
         self.burn = False
         self.burn_split = False
+        self.stand = False
+        self.stand_split = False
+        self.split = False
 
         for i in range(len(self.player_cards_label)):
             self.player_cards_label[i].destroy()
@@ -110,7 +116,7 @@ class WindowGame(customtkinter.CTk):
         self.player_cards_label_split.clear()
 
     def hit_button_callback(self):
-        if self.burn is False:
+        if self.burn is False and self.stand is False:
             self.player.add_card(1, self.deck)
             self.player.add_points()
             self.points_player_label.configure(text=f'Points\n{self.player.get_points()}')
@@ -118,6 +124,7 @@ class WindowGame(customtkinter.CTk):
             if self.rules.checkBurn(self.player.get_points()):
                 self.burn = True
         elif self.burn_split is False and len(self.player.second_deck):
+            self.split = True
             self.player.add_card_split(self.deck)
             self.player.add_points_split()
             self.points_player_label.configure(text=f'Points\n{self.player.get_points_split()}')
@@ -130,6 +137,89 @@ class WindowGame(customtkinter.CTk):
             self.new_game_button.place(relx=0.79, rely=0.94, anchor=tkinter.CENTER)
             print('burn')
 
+    def stand_button_callback(self):
+        if len(self.player.second_deck):
+            if self.burn is False:
+                self.stand = True
+            if self.burn_split is False and self.split:
+                self.stand_split = True
+
+            if self.burn and self.stand_split:
+                self.dealer.add_card_over_16(self.deck)
+                self.dealer.add_points()
+                self.points_dealer_label.configure(text=f'Points\n{self.dealer.get_points()}')
+                self.display_dealer_cards()
+                self.stand_check_split()
+                self.hide_bet_option_widgets()
+                self.new_game_button.place(relx=0.79, rely=0.94, anchor=tkinter.CENTER)
+            elif self.stand and self.burn_split:
+                self.dealer.add_card_over_16(self.deck)
+                self.dealer.add_points()
+                self.points_dealer_label.configure(text=f'Points\n{self.dealer.get_points()}')
+                self.display_dealer_cards()
+                self.stand_check()
+                self.hide_bet_option_widgets()
+                self.new_game_button.place(relx=0.79, rely=0.94, anchor=tkinter.CENTER)
+            elif self.stand and self.stand_split:
+                self.dealer.add_card_over_16(self.deck)
+                self.dealer.add_points()
+                self.points_dealer_label.configure(text=f'Points\n{self.dealer.get_points()}')
+                self.display_dealer_cards()
+                self.stand_check_split()
+                self.stand_check_split()
+                self.hide_bet_option_widgets()
+                self.new_game_button.place(relx=0.79, rely=0.94, anchor=tkinter.CENTER)
+        else:
+            self.dealer.add_card_over_16(self.deck)
+            self.dealer.add_points()
+            self.points_dealer_label.configure(text=f'Points\n{self.dealer.get_points()}')
+            self.display_dealer_cards()
+            self.stand_check()
+            self.hide_bet_option_widgets()
+            self.new_game_button.place(relx=0.79, rely=0.94, anchor=tkinter.CENTER)
+
+    def stand_check_split(self):
+        blackjack_player = self.rules.check_BlackJack_split(self.player)
+        blackjack_dealer = self.rules.check_BlackJack(self.dealer)
+        if blackjack_player and blackjack_dealer is False:
+            self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet() * 2.5)
+            print('Black Jack!!!')
+        elif blackjack_player and blackjack_dealer:
+            self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet())
+            print('Remis')
+        elif self.rules.checkBurn(self.dealer.get_points()):
+            self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet() * 2)
+            print('DEALER BURN')
+        elif self.rules.check_win(self.player.get_points_split(), self.dealer.get_points()):
+            self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet() * 2)
+            print('WIN')
+        elif self.rules.check_draw(self.player.get_points_split(), self.dealer.get_points()):
+            self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet())
+            print('DRAW')
+        else:
+            print('LOSE')
+
+    def stand_check(self):
+        blackjack_player = self.rules.check_BlackJack(self.player)
+        blackjack_dealer = self.rules.check_BlackJack(self.dealer)
+
+        if blackjack_player and blackjack_dealer is False:
+            self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet() * 2.5)
+            print('Black Jack!!!')
+        elif blackjack_player and blackjack_dealer:
+            self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet())
+            print('Remis')
+        elif self.rules.checkBurn(self.dealer.get_points()):
+            self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet() * 2)
+            print('DEALER BURN')
+        elif self.rules.check_win(self.player.get_points(), self.dealer.get_points()):
+            self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet() * 2)
+            print('WIN')
+        elif self.rules.check_draw(self.player.get_points(), self.dealer.get_points()):
+            self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet())
+            print('DRAW')
+        else:
+            print('LOSE')
     def surrender_button_callback(self):
         self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet()*0.5)
         self.hide_bet_option_widgets()
@@ -144,6 +234,9 @@ class WindowGame(customtkinter.CTk):
         self.display_player_cards_split()
         self.player.add_points()
         self.points_player_label.configure(text=f'Points\n{self.player.get_points()}')
+        self.double_down_button.place_forget()
+        self.split_button.place_forget()
+        self.surrender_button.place_forget()
 
     def double_down_button_callback(self):
         self.player.set_current_money(self.player.get_current_money() - self.player.get_money_in_bet())
@@ -182,36 +275,6 @@ class WindowGame(customtkinter.CTk):
                 print('DRAW')
             else:
                 print('LOSE')
-
-        self.hide_bet_option_widgets()
-        self.new_game_button.place(relx=0.79, rely=0.94, anchor=tkinter.CENTER)
-
-    def stand_button_callback(self):
-        self.dealer.add_card_over_16(self.deck)
-        self.dealer.add_points()
-        self.points_dealer_label.configure(text=f'Points\n{self.dealer.get_points()}')
-        self.display_dealer_cards()
-
-        blackjack_player = self.rules.check_BlackJack(self.player)
-        blackjack_dealer = self.rules.check_BlackJack(self.dealer)
-
-        if blackjack_player and blackjack_dealer is False:
-            self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet() * 2.5)
-            print('Black Jack!!!')
-        elif blackjack_player and blackjack_dealer:
-            self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet())
-            print('Remis')
-        elif self.rules.checkBurn(self.dealer.get_points()):
-            self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet() * 2)
-            print('DEALER BURN')
-        elif self.rules.check_win(self.player.get_points(), self.dealer.get_points()):
-            self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet() * 2)
-            print('WIN')
-        elif self.rules.check_draw(self.player.get_points(), self.dealer.get_points()):
-            self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet())
-            print('DRAW')
-        else:
-            print('LOSE')
 
         self.hide_bet_option_widgets()
         self.new_game_button.place(relx=0.79, rely=0.94, anchor=tkinter.CENTER)

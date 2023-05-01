@@ -44,7 +44,3 @@ class Deck:
 
     def remove_card_from_deck(self):
         self.primaryDeck.pop(0)
-
-
-
-
