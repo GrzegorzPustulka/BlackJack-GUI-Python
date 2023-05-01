@@ -66,6 +66,12 @@ class Player(Deck):
 
     def clear_hand(self):
         self.hand_deck.clear()
+        self.second_deck.clear()
 
     def split_cards(self):
         self.second_deck.append(self.hand_deck.pop())
+
+    def check_split(self):
+        first_card_end_index = self.hand_deck[0].find('-')
+        second_card_end_index = self.hand_deck[1].find('-')
+        return self.hand_deck[0][0:first_card_end_index] == self.hand_deck[1][0:second_card_end_index]

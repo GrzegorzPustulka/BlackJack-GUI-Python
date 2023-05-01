@@ -88,9 +88,14 @@ class WindowGame(customtkinter.CTk):
         self.display_bet_widgets()
         self.player.set_points(0)
         self.dealer.set_points(0)
+        self.player.set_points_split(0)
         self.current_money_label.configure(text=f'Current Money\n{self.player.get_current_money()}')
         self.points_player_label.configure(text=f'Points\n{self.player.get_points()}')
         self.points_dealer_label.configure(text=f'Points\n{self.dealer.get_points()}')
+        self.player.set_money_in_bet(0)
+        self.money_in_bet_label.configure(text=f'Money in bet\n{self.player.get_money_in_bet()}')
+        self.burn = False
+        self.burn_split = False
 
         for i in range(len(self.player_cards_label)):
             self.player_cards_label[i].destroy()
@@ -100,8 +105,9 @@ class WindowGame(customtkinter.CTk):
             self.dealer_cards_label[i].destroy()
         self.dealer_cards_label.clear()
 
-        self.player.set_money_in_bet(0)
-        self.money_in_bet_label.configure(text=f'Money in bet\n{self.player.get_money_in_bet()}')
+        for i in range(len(self.player_cards_label_split)):
+            self.player_cards_label_split[i].destroy()
+        self.player_cards_label_split.clear()
 
     def hit_button_callback(self):
         if self.burn is False:
@@ -116,7 +122,7 @@ class WindowGame(customtkinter.CTk):
             self.player.add_points_split()
             self.points_player_label.configure(text=f'Points\n{self.player.get_points_split()}')
             self.display_player_cards_split()
-            if self.rules.checkBurn(self.player.get_points_split()):  # zmienic na split_points
+            if self.rules.checkBurn(self.player.get_points_split()):
                 self.burn_split = True
 
         if (self.burn and self.burn_split) or (self.burn and len(self.player.second_deck) == 0):
@@ -225,8 +231,9 @@ class WindowGame(customtkinter.CTk):
         self.hit_button.place(relx=0.18, rely=0.94, anchor=tkinter.CENTER)
         self.stand_button.place(relx=0.265, rely=0.94, anchor=tkinter.CENTER)
         self.double_down_button.place(relx=0.39, rely=0.94, anchor=tkinter.CENTER)
-        self.split_button.place(relx=0.515, rely=0.94, anchor=tkinter.CENTER)
         self.surrender_button.place(relx=0.62, rely=0.94, anchor=tkinter.CENTER)
+        if self.player.check_split():
+            self.split_button.place(relx=0.515, rely=0.94, anchor=tkinter.CENTER)
 
     def display_bet_widgets(self):
         self.chip_10_button.place(relx=0.58, rely=0.92, anchor=tkinter.CENTER)

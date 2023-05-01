@@ -43,7 +43,6 @@ class Deck:
             self.cards_image[key] = "images/cards/" + key + ".png"
 
     def remove_card_from_deck(self):
-        print(self.primaryDeck[0])
         self.primaryDeck.pop(0)
 
 
