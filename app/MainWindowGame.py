@@ -12,6 +12,9 @@ class WindowGame(customtkinter.CTk):
         super().__init__()
         self.dealer_cards_label = []
         self.player_cards_label = []
+        self.player_cards_label_split = []
+        self.burn = False
+        self.burn_split = False
         self.player = Player()
         self.dealer = Dealer()
         self.rules = Rules()
@@ -101,19 +104,40 @@ class WindowGame(customtkinter.CTk):
         self.money_in_bet_label.configure(text=f'Money in bet\n{self.player.get_money_in_bet()}')
 
     def hit_button_callback(self):
-        self.player.add_card(1, self.deck)
-        self.player.add_points()
-        self.points_player_label.configure(text=f'Points\n{self.player.get_points()}')
-        self.display_player_cards()
-        if self.rules.checkBurn(self.player.get_points()):
+        if self.burn is False:
+            self.player.add_card(1, self.deck)
+            self.player.add_points()
+            self.points_player_label.configure(text=f'Points\n{self.player.get_points()}')
+            self.display_player_cards()
+            if self.rules.checkBurn(self.player.get_points()):
+                self.burn = True
+        elif self.burn_split is False and len(self.player.second_deck):
+            self.player.add_card_split(self.deck)
+            self.player.add_points_split()
+            self.points_player_label.configure(text=f'Points\n{self.player.get_points_split()}')
+            self.display_player_cards_split()
+            if self.rules.checkBurn(self.player.get_points_split()):  # zmienic na split_points
+                self.burn_split = True
+
+        if (self.burn and self.burn_split) or (self.burn and len(self.player.second_deck) == 0):
             self.hide_bet_option_widgets()
             self.new_game_button.place(relx=0.79, rely=0.94, anchor=tkinter.CENTER)
+            print('burn')
 
     def surrender_button_callback(self):
-        pass
+        self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet()*0.5)
+        self.hide_bet_option_widgets()
+        self.new_game_button.place(relx=0.79, rely=0.94, anchor=tkinter.CENTER)
 
     def split_button_callback(self):
-        pass
+        self.player.split_cards()
+        self.player.set_current_money(self.player.get_current_money() - self.player.get_money_in_bet())
+        self.player.set_money_in_bet(self.player.get_money_in_bet() * 2)
+        self.money_in_bet_label.configure(text=f'Money in bet\n{self.player.get_money_in_bet()}')
+        self.display_player_cards()
+        self.display_player_cards_split()
+        self.player.add_points()
+        self.points_player_label.configure(text=f'Points\n{self.player.get_points()}')
 
     def double_down_button_callback(self):
         self.player.set_current_money(self.player.get_current_money() - self.player.get_money_in_bet())
@@ -238,12 +262,32 @@ class WindowGame(customtkinter.CTk):
             self.player_cards_label[i].place(relx=relx, rely=0.2, anchor=tkinter.CENTER)
             relx += 0.05
 
+    def display_player_cards_split(self):
+        for i in range(len(self.player_cards_label_split)):
+            self.player_cards_label_split[i].destroy()
+        self.player_cards_label_split.clear()
+        image_cards = self.create_image_player_cards_label_split()
+        relx = 0.17
+        for i in range(len(image_cards)):
+            self.player_cards_label_split.append(self.create_card_label(image_cards[i]))
+            self.player_cards_label_split[i].place(relx=relx, rely=0.5, anchor=tkinter.CENTER)
+            relx += 0.05
+
     def create_image_player_cards_label(self):
         image_cards = []
         for i in range(len(self.player.hand_deck)):
             image_cards.append(
                 customtkinter.CTkImage(light_image=Image.open(self.deck.cards_image[self.player.hand_deck[i]]),
                                        dark_image=Image.open(self.deck.cards_image[self.player.hand_deck[i]]),
+                                       size=(60, 87)))
+        return image_cards
+
+    def create_image_player_cards_label_split(self):
+        image_cards = []
+        for i in range(len(self.player.second_deck)):
+            image_cards.append(
+                customtkinter.CTkImage(light_image=Image.open(self.deck.cards_image[self.player.second_deck[i]]),
+                                       dark_image=Image.open(self.deck.cards_image[self.player.second_deck[i]]),
                                        size=(60, 87)))
         return image_cards
 

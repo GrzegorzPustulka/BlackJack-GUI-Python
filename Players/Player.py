@@ -8,7 +8,9 @@ class Player(Deck):
         self.money_in_bet = 0
         self.money_to_win = 0
         self.points = 0
+        self.points_split = 0
         self.hand_deck = []
+        self.second_deck = []
 
     def set_current_money(self, current_money):
         self.current_money = current_money
@@ -34,21 +36,36 @@ class Player(Deck):
     def get_points(self):
         return self.points
 
+    def set_points_split(self, points):
+        self.points_split = points
+
+    def get_points_split(self):
+        return self.points_split
+
     def add_card(self, count, deck):
         for i in range(count):
             self.hand_deck.append(deck.primaryDeck[0])
             deck.remove_card_from_deck()
+
+    def add_card_split(self, deck):
+        self.second_deck.append(deck.primaryDeck[0])
+        deck.remove_card_from_deck()
 
     def add_points(self):
         self.set_points(0)
         for i in range(len(self.hand_deck)):
             self.set_points(self.get_points() + self.deckPoint[self.hand_deck[i]])
 
+    def add_points_split(self):
+        self.set_points_split(0)
+        for i in range(len(self.second_deck)):
+            self.set_points_split(self.get_points_split() + self.deckPoint[self.second_deck[i]])
+
     def check_burn(self):
-        if self.get_points() > 21:
-            return True
-        else:
-            return False
+        return self.get_points() > 21
 
     def clear_hand(self):
         self.hand_deck.clear()
+
+    def split_cards(self):
+        self.second_deck.append(self.hand_deck.pop())
