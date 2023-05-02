@@ -6,13 +6,15 @@ class Player(Deck):
         super().__init__()
         self.current_money = 1000
         self.money_in_bet = 0
-        self.money_to_win = 0
         self.points = 0
         self.points_split = 0
         self.hand_deck = []
         self.second_deck = []
         self.ace = 0
         self.ace_split = 0
+        self.win = 0
+        self.draw = 0
+        self.lose = 0
 
     def set_current_money(self, current_money):
         self.current_money = current_money
@@ -25,12 +27,6 @@ class Player(Deck):
 
     def get_money_in_bet(self):
         return self.money_in_bet
-
-    def set_money_to_win(self, money_to_win):
-        self.money_to_win = money_to_win
-
-    def get_money_to_win(self):
-        return self.money_to_win
 
     def set_points(self, points):
         self.points = points
@@ -55,6 +51,24 @@ class Player(Deck):
 
     def get_counter_ace_split(self):
         return self.ace_split
+
+    def set_win(self, win):
+        self.win = win
+
+    def get_win(self):
+        return self.win
+
+    def set_draw(self, draw):
+        self.draw = draw
+
+    def get_draw(self):
+        return self.draw
+
+    def set_lose(self, lose):
+        self.lose = lose
+
+    def get_lose(self):
+        return self.lose
 
     def add_card(self, count, deck):
         for i in range(count):
