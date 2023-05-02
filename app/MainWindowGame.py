@@ -77,6 +77,9 @@ class WindowGame(customtkinter.CTk):
         self.points_dealer_label = self.create_statistics_label(f'Points\n{self.dealer.get_points()}')
         self.points_dealer_label.place(relx=0.935, rely=0.05, anchor=tkinter.CENTER)
 
+        self.result_label = self.create_result_label()
+        self.result_label_split = self.create_result_label()
+
     def create_new_game_button(self):
         return customtkinter.CTkButton(master=self,
                                        font=('arial', 30),
@@ -86,6 +89,8 @@ class WindowGame(customtkinter.CTk):
                                        command=self.new_game_button_callback)
 
     def new_game_button_callback(self):
+        self.result_label.place_forget()
+        self.result_label_split.place_forget()
         self.player.clear_hand()
         self.dealer.clear_hand()
         self.display_bet_widgets()
@@ -122,6 +127,8 @@ class WindowGame(customtkinter.CTk):
             self.points_player_label.configure(text=f'Points\n{self.player.get_points()}')
             self.display_player_cards()
             if self.rules.checkBurn(self.player.get_points()):
+                self.result_label.place(relx=0.5, rely=0.55, anchor=tkinter.CENTER)
+                self.result_label.configure(text='YOU LOSE')
                 self.burn = True
         elif self.burn_split is False and len(self.player.second_deck):
             self.split = True
@@ -130,12 +137,19 @@ class WindowGame(customtkinter.CTk):
             self.points_player_label.configure(text=f'Points\n{self.player.get_points_split()}')
             self.display_player_cards_split()
             if self.rules.checkBurn(self.player.get_points_split()):
+                self.result_label_split.place(relx=0.5, rely=0.65, anchor=tkinter.CENTER)
+                self.result_label_split.configure(text='YOU LOSE')
                 self.burn_split = True
 
         if (self.burn and self.burn_split) or (self.burn and len(self.player.second_deck) == 0):
             self.hide_bet_option_widgets()
             self.new_game_button.place(relx=0.79, rely=0.94, anchor=tkinter.CENTER)
-            print('burn')
+            if len(self.player.second_deck) == 0:
+                self.result_label.place(relx=0.5, rely=0.55, anchor=tkinter.CENTER)
+                self.result_label.configure(text='YOU LOSE')
+            else:
+                self.result_label_split.place(relx=0.5, rely=0.65, anchor=tkinter.CENTER)
+                self.result_label_split.configure(text='YOU LOSE')
 
     def stand_button_callback(self):
         if len(self.player.second_deck):
@@ -165,7 +179,7 @@ class WindowGame(customtkinter.CTk):
                 self.dealer.add_points()
                 self.points_dealer_label.configure(text=f'Points\n{self.dealer.get_points()}')
                 self.display_dealer_cards()
-                self.stand_check_split()
+                self.stand_check()
                 self.stand_check_split()
                 self.hide_bet_option_widgets()
                 self.new_game_button.place(relx=0.79, rely=0.94, anchor=tkinter.CENTER)
@@ -183,21 +197,27 @@ class WindowGame(customtkinter.CTk):
         blackjack_dealer = self.rules.check_BlackJack(self.dealer)
         if blackjack_player and blackjack_dealer is False:
             self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet() * 2.5)
-            print('Black Jack!!!')
+            self.result_label_split.place(relx=0.5, rely=0.65, anchor=tkinter.CENTER)
+            self.result_label_split.configure(text='BLACKJACK')
         elif blackjack_player and blackjack_dealer:
             self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet())
-            print('Remis')
+            self.result_label_split.place(relx=0.5, rely=0.65, anchor=tkinter.CENTER)
+            self.result_label_split.configure(text='DRAW')
         elif self.rules.checkBurn(self.dealer.get_points()):
             self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet() * 2)
-            print('DEALER BURN')
+            self.result_label_split.place(relx=0.5, rely=0.65, anchor=tkinter.CENTER)
+            self.result_label_split.configure(text='YOU WIN')
         elif self.rules.check_win(self.player.get_points_split(), self.dealer.get_points()):
             self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet() * 2)
-            print('WIN')
+            self.result_label_split.place(relx=0.5, rely=0.65, anchor=tkinter.CENTER)
+            self.result_label_split.configure(text='YOU WIN')
         elif self.rules.check_draw(self.player.get_points_split(), self.dealer.get_points()):
             self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet())
-            print('DRAW')
+            self.result_label_split.place(relx=0.5, rely=0.65, anchor=tkinter.CENTER)
+            self.result_label_split.configure(text='DRAW')
         else:
-            print('LOSE')
+            self.result_label_split.place(relx=0.5, rely=0.65, anchor=tkinter.CENTER)
+            self.result_label_split.configure(text='YOU LOSE')
 
     def stand_check(self):
         blackjack_player = self.rules.check_BlackJack(self.player)
@@ -205,21 +225,28 @@ class WindowGame(customtkinter.CTk):
 
         if blackjack_player and blackjack_dealer is False:
             self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet() * 2.5)
-            print('Black Jack!!!')
+            self.result_label.place(relx=0.5, rely=0.55, anchor=tkinter.CENTER)
+            self.result_label.configure(text='BLACKJACK')
         elif blackjack_player and blackjack_dealer:
             self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet())
-            print('Remis')
+            self.result_label.place(relx=0.5, rely=0.55, anchor=tkinter.CENTER)
+            self.result_label.configure(text='DRAW')
         elif self.rules.checkBurn(self.dealer.get_points()):
             self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet() * 2)
-            print('DEALER BURN')
+            self.result_label.place(relx=0.5, rely=0.55, anchor=tkinter.CENTER)
+            self.result_label.configure(text='YOU WIN')
         elif self.rules.check_win(self.player.get_points(), self.dealer.get_points()):
             self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet() * 2)
-            print('WIN')
+            self.result_label.place(relx=0.5, rely=0.55, anchor=tkinter.CENTER)
+            self.result_label.configure(text='YOU WIN')
         elif self.rules.check_draw(self.player.get_points(), self.dealer.get_points()):
             self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet())
-            print('DRAW')
+            self.result_label.place(relx=0.5, rely=0.55, anchor=tkinter.CENTER)
+            self.result_label.configure(text='DRAW')
         else:
-            print('LOSE')
+            self.result_label.place(relx=0.5, rely=0.55, anchor=tkinter.CENTER)
+            self.result_label.configure(text='LOSE')
+
     def surrender_button_callback(self):
         self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet()*0.5)
         self.hide_bet_option_widgets()
@@ -260,21 +287,27 @@ class WindowGame(customtkinter.CTk):
             self.points_dealer_label.configure(text=f'Points\n{self.dealer.get_points()}')
             if blackjack_player and blackjack_dealer is False:
                 self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet() * 4.5)
-                print('Black Jack!!!')
+                self.result_label.place(relx=0.5, rely=0.55, anchor=tkinter.CENTER)
+                self.result_label.configure(text='BLACKJACK')
             elif blackjack_player and blackjack_dealer:
                 self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet())
-                print('Remis')
+                self.result_label.place(relx=0.5, rely=0.55, anchor=tkinter.CENTER)
+                self.result_label.configure(text='DRAW')
             elif self.rules.checkBurn(self.dealer.get_points()):
                 self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet() * 4)
-                print('DEALER BURN')
+                self.result_label.place(relx=0.5, rely=0.55, anchor=tkinter.CENTER)
+                self.result_label.configure(text='YOU WIN')
             elif self.rules.check_win(self.player.get_points(), self.dealer.get_points()):
                 self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet() * 4)
-                print('WIN')
+                self.result_label.place(relx=0.5, rely=0.55, anchor=tkinter.CENTER)
+                self.result_label.configure(text='YOU WIN')
             elif self.rules.check_draw(self.player.get_points(), self.dealer.get_points()):
                 self.player.set_current_money(self.player.get_current_money() + self.player.get_money_in_bet() * 2)
-                print('DRAW')
+                self.result_label.place(relx=0.5, rely=0.55, anchor=tkinter.CENTER)
+                self.result_label.configure(text='DRAW')
             else:
-                print('LOSE')
+                self.result_label.place(relx=0.5, rely=0.55, anchor=tkinter.CENTER)
+                self.result_label.configure(text='YOU LOSE')
 
         self.hide_bet_option_widgets()
         self.new_game_button.place(relx=0.79, rely=0.94, anchor=tkinter.CENTER)
@@ -536,3 +569,11 @@ class WindowGame(customtkinter.CTk):
                                       width=120,
                                       height=25,
                                       corner_radius=8)
+
+    def create_result_label(self):
+        return customtkinter.CTkLabel(master=self,
+                                      text="You Win",
+                                      width=120,
+                                      height=25,
+                                      font=('arial', 30),
+                                      corner_radius=40)

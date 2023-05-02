@@ -3,15 +3,18 @@ class Rules:
         pass
 
     def check_BlackJack(self, player):
-        blackJack = False
+        seven = 0
         if player.get_points() == 21 and len(player.hand_deck) == 2:
-            blackJack = True
+            return True
         elif player.get_points() == 21 and len(player.hand_deck) == 3:
             for card in player.hand_deck:
-                if 'Seven' not in card:
-                    break
-            blackJack = True
-        return blackJack
+                if 'Seven' in card:
+                    seven += 1
+                else:
+                    return False
+            if seven == 3:
+                return True
+        return False
 
     def checkBurn(self, points):
         return points > 21
@@ -23,12 +26,15 @@ class Rules:
         return player_points == dealer_points
 
     def check_BlackJack_split(self, player):
-        blackJack = False
+        seven = 0
         if player.get_points_split() == 21 and len(player.second_deck) == 2:
-            blackJack = True
+            return True
         elif player.get_points_split() == 21 and len(player.second_deck) == 3:
             for card in player.second_deck:
-                if 'Seven' not in card:
-                    break
-            blackJack = True
-        return blackJack
+                if 'Seven' in card:
+                    seven += 1
+                else:
+                    return False
+            if seven == 3:
+                return True
+        return False
