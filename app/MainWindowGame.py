@@ -3,7 +3,7 @@ from PIL import Image
 import tkinter
 from Players.Player import Player
 from Players.Dealer import Dealer
-from Cards.Deck import Deck
+from Deck.Deck import Deck
 from Rules.Rules import Rules
 
 
@@ -125,13 +125,14 @@ class WindowGame(customtkinter.CTk):
         self.player_cards_label_split.clear()
 
     def hit_button_callback(self):
+        self.double_down_button.place_forget()
+        self.surrender_button.place_forget()
         if self.burn is False and self.stand is False:
             self.player.add_card(1, self.deck)
             self.player.add_points()
             self.points_player_label.configure(text=f'Points\n{self.player.get_points()}')
             self.display_player_cards()
             if self.rules.checkBurn(self.player.get_points()):
-
                 self.burn = True
         elif self.burn_split is False and len(self.player.second_deck):
             self.split = True
@@ -270,6 +271,7 @@ class WindowGame(customtkinter.CTk):
     def split_button_callback(self):
         self.player.split_cards()
         self.player.set_current_money(self.player.get_current_money() - self.player.get_money_in_bet())
+        self.current_money_label.configure(text=f'Current Money\n{self.player.get_current_money()}')
         self.player.set_money_in_bet(self.player.get_money_in_bet() * 2)
         self.money_in_bet_label.configure(text=f'Money in bet\n{self.player.get_money_in_bet()}')
         self.display_player_cards()

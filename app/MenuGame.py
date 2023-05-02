@@ -2,15 +2,18 @@ import customtkinter
 from PIL import Image
 import tkinter
 from app.MainWindowGame import WindowGame
+import pygame.mixer
 
 
 class Menu(customtkinter.CTk):
     def __init__(self):
         super().__init__()
+        pygame.mixer.init()
+        pygame.mixer.music.load('music/casino.mp3')
+        pygame.mixer.music.play(-1)
         self.title("Black Jack")
         self.set_window_size('612x612')
         self.resizable(False, False)
-
         self.background_image = self.create_background_image()
         self.background = self.set_background()
         self.background.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)

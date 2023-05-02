@@ -1,4 +1,4 @@
-from Cards.Deck import Deck
+from Deck.Deck import Deck
 
 
 class Player(Deck):
