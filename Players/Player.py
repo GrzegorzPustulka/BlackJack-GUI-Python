@@ -11,6 +11,8 @@ class Player(Deck):
         self.points_split = 0
         self.hand_deck = []
         self.second_deck = []
+        self.ace = 0
+        self.ace_split = 0
 
     def set_current_money(self, current_money):
         self.current_money = current_money
@@ -42,6 +44,18 @@ class Player(Deck):
     def get_points_split(self):
         return self.points_split
 
+    def set_counter_ace(self, ace):
+        self.ace = ace
+
+    def get_counter_ace(self):
+        return self.ace
+
+    def set_counter_ace_split(self, ace_split):
+        self.ace_split = ace_split
+
+    def get_counter_ace_split(self):
+        return self.ace_split
+
     def add_card(self, count, deck):
         for i in range(count):
             self.hand_deck.append(deck.primaryDeck[0])
@@ -55,11 +69,23 @@ class Player(Deck):
         self.set_points(0)
         for i in range(len(self.hand_deck)):
             self.set_points(self.get_points() + self.deckPoint[self.hand_deck[i]])
+            if 'Ace' in self.hand_deck[i]:
+                self.set_counter_ace(self.get_counter_ace() + 1)
+
+        while self.get_points() > 21 and self.get_counter_ace() > 0:
+            self.set_points(self.get_points() - 10)
+            self.set_counter_ace(self.get_counter_ace() - 1)
 
     def add_points_split(self):
         self.set_points_split(0)
         for i in range(len(self.second_deck)):
             self.set_points_split(self.get_points_split() + self.deckPoint[self.second_deck[i]])
+            if 'Ace' in self.second_deck[i]:
+                self.set_counter_ace_split(self.get_counter_ace_split() + 1)
+
+        while self.get_points_split() > 21 and self.get_counter_ace_split() > 0:
+            self.set_points_split(self.get_points_split() - 10)
+            self.set_counter_ace_split(self.get_counter_ace_split() - 1)
 
     def check_burn(self):
         return self.get_points() > 21

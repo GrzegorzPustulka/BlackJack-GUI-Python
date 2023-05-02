@@ -17,7 +17,7 @@ class Deck:
                             "Jack-Spades", "Jack-Hearts", "Jack-Clubs", "Jack-Diamonds",
                             "Queen-Spades", "Queen-Hearts", "Queen-Clubs", "Queen-Diamonds",
                             "King-Spades", "King-Hearts", "King-Clubs", "King-Diamonds",
-                            "As-Spades", "As-Hearts", "As-Clubs", "As-Diamonds",
+                            "Ace-Spades", "Ace-Hearts", "Ace-Clubs", "Ace-Diamonds",
                             ] * self.how_many_decks
 
         self.deckPoint = {
@@ -33,7 +33,7 @@ class Deck:
             "Jack-Spades": 10, "Jack-Hearts": 10, "Jack-Clubs": 10, "Jack-Diamonds": 10,
             "Queen-Spades": 10, "Queen-Hearts": 10, "Queen-Clubs": 10, "Queen-Diamonds": 10,
             "King-Spades": 10, "King-Hearts": 10, "King-Clubs": 10, "King-Diamonds": 10,
-            "As-Spades": 11, "As-Hearts": 11, "As-Clubs": 11, "As-Diamonds": 11}
+            "Ace-Spades": 11, "Ace-Hearts": 11, "Ace-Clubs": 11, "Ace-Diamonds": 11}
 
         random.shuffle(self.primaryDeck)
 

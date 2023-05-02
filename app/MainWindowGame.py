@@ -107,6 +107,9 @@ class WindowGame(customtkinter.CTk):
         self.stand = False
         self.stand_split = False
         self.split = False
+        self.player.set_counter_ace_split(0)
+        self.player.set_counter_ace(0)
+        self.dealer.set_counter_ace(0)
 
         for i in range(len(self.player_cards_label)):
             self.player_cards_label[i].destroy()

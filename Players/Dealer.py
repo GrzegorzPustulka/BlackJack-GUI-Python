@@ -6,6 +6,13 @@ class Dealer(Deck):
         super().__init__()
         self.points = 0
         self.hand_deck = []
+        self.ace = 0
+
+    def set_counter_ace(self, ace):
+        self.ace = ace
+
+    def get_counter_ace(self):
+        return self.ace
 
     def set_points(self, points):
         self.points = points
@@ -31,4 +38,9 @@ class Dealer(Deck):
         self.set_points(0)
         for i in range(len(self.hand_deck)):
             self.set_points(self.get_points() + self.deckPoint[self.hand_deck[i]])
+            if 'Ace' in self.hand_deck[i]:
+                self.set_counter_ace(self.get_counter_ace() + 1)
 
+        while self.get_points() > 21 and self.get_counter_ace() > 0:
+            self.set_points(self.get_points() - 10)
+            self.set_counter_ace(self.get_counter_ace() - 1)
