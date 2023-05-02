@@ -58,7 +58,7 @@ Hope this helps! Good luck with your BlackJack game.
   alt="BlackJack"
   title="Black Jack"
   width="1074"
-  height="547"
+  height="500"
   style="display: inline-block; margin: 0 auto">
 
 <img
@@ -66,7 +66,7 @@ Hope this helps! Good luck with your BlackJack game.
   alt="BlackJack"
   title="Black Jack"
   width="1074"
-  height="547"
+  height="500"
   style="display: inline-block; margin: 0 auto">
 
 <img
@@ -74,7 +74,7 @@ Hope this helps! Good luck with your BlackJack game.
   alt="BlackJack"
   title="Black Jack"
   width="1074"
-  height="547"
+  height="500"
   style="display: inline-block; margin: 0 auto">
 
 <img
@@ -82,5 +82,5 @@ Hope this helps! Good luck with your BlackJack game.
   alt="BlackJack"
   title="Black Jack"
   width="1074"
-  height="547"
+  height="500"
   style="display: inline-block; margin: 0 auto">
