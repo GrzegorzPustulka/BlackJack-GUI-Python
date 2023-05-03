@@ -1,0 +1,12 @@
+# Pliki wykonywalne Pythona
+*.pyc
+*.pyo
+*.pyd
+
+# Katalogi generowane przez Pythona
+__pycache__/
+env/
+venv/
+*.egg-info/
+dist/
+build/

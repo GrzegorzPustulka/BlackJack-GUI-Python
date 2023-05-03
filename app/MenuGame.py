@@ -4,12 +4,12 @@ import tkinter
 from app.MainWindowGame import WindowGame
 import pygame.mixer
 from app.Settings import Settings
+from app.Info import Info
 
 
 class Menu(customtkinter.CTk):
     def __init__(self):
         super().__init__()
-        self.settings = None
         customtkinter.set_appearance_mode("dark")
         pygame.mixer.init()
         pygame.mixer.music.load('music/casino.mp3')
@@ -27,8 +27,33 @@ class Menu(customtkinter.CTk):
         self.info_button = self.create_info_button()
         self.info_button.place(relx=0.5, rely=0.9, anchor=tkinter.CENTER)
 
+        self.settings = None
+        self.menu_window_game = None
+        self.info = None
+
     def set_window_size(self, size):
         self.geometry(size)
+
+    def start_button_callback(self):
+        # self.destroy()
+        # app = WindowGame()
+        # app.mainloop()
+        if self.menu_window_game is None or not self.menu_window_game.winfo_exists():
+            self.menu_window_game = WindowGame(self)  # create window if its None or destroyed
+        else:
+            self.menu_window_game.focus()  # if window exists focus it
+
+    def settings_button_callback(self):
+        if self.settings is None or not self.settings.winfo_exists():
+            self.settings = Settings(self)  # create window if its None or destroyed
+        else:
+            self.settings.focus()  # if window exists focus it
+
+    def info_button_callback(self):
+        if self.info is None or not self.info.winfo_exists():
+            self.info = Info(self)  # create window if its None or destroyed
+        else:
+            self.info.focus()  # if window exists focus it
 
     def create_background_image(self):
         return customtkinter.CTkImage(light_image=Image.open("images/menu.jpg"),
@@ -66,16 +91,3 @@ class Menu(customtkinter.CTk):
                                        height=32,
                                        command=self.info_button_callback)
 
-    def start_button_callback(self):
-        self.destroy()
-        app = WindowGame()
-        app.mainloop()
-
-    def settings_button_callback(self):
-        if self.settings is None or not self.settings.winfo_exists():
-            self.settings = Settings(self)  # create window if its None or destroyed
-        else:
-            self.settings.focus()  # if window exists focus it
-
-    def info_button_callback(self):
-        print("button pressed")

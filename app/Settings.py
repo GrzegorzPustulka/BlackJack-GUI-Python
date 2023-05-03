@@ -2,6 +2,7 @@ import customtkinter
 import tkinter
 import pygame.mixer
 
+
 class Settings(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

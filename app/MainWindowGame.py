@@ -7,9 +7,9 @@ from Deck.Deck import Deck
 from Rules.Rules import Rules
 
 
-class WindowGame(customtkinter.CTk):
-    def __init__(self):
-        super().__init__()
+class WindowGame(customtkinter.CTkToplevel):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.dealer_cards_label = []
         self.player_cards_label = []
         self.player_cards_label_split = []
