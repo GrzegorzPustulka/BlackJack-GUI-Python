@@ -44,3 +44,5 @@ class Dealer(Deck):
         while self.get_points() > 21 and self.get_counter_ace() > 0:
             self.set_points(self.get_points() - 10)
             self.set_counter_ace(self.get_counter_ace() - 1)
+
+        self.set_counter_ace(0)

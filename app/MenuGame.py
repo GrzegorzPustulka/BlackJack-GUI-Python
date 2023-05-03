@@ -3,11 +3,14 @@ from PIL import Image
 import tkinter
 from app.MainWindowGame import WindowGame
 import pygame.mixer
+from app.Settings import Settings
 
 
 class Menu(customtkinter.CTk):
     def __init__(self):
         super().__init__()
+        self.settings = None
+        customtkinter.set_appearance_mode("dark")
         pygame.mixer.init()
         pygame.mixer.music.load('music/casino.mp3')
         pygame.mixer.music.play(-1)
@@ -69,7 +72,10 @@ class Menu(customtkinter.CTk):
         app.mainloop()
 
     def settings_button_callback(self):
-        print("button pressed")
+        if self.settings is None or not self.settings.winfo_exists():
+            self.settings = Settings(self)  # create window if its None or destroyed
+        else:
+            self.settings.focus()  # if window exists focus it
 
     def info_button_callback(self):
         print("button pressed")

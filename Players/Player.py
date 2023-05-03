@@ -90,6 +90,8 @@ class Player(Deck):
             self.set_points(self.get_points() - 10)
             self.set_counter_ace(self.get_counter_ace() - 1)
 
+        self.set_counter_ace(0)
+
     def add_points_split(self):
         self.set_points_split(0)
         for i in range(len(self.second_deck)):

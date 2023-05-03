@@ -84,3 +84,11 @@ Hope this helps! Good luck with your BlackJack game.
   width="1074"
   height="500"
   style="display: inline-block; margin: 0 auto">
+
+<img
+  src="pictures/settings.png"
+  alt="BlackJack"
+  title="Black Jack"
+  width="332"
+  height="276"
+  style="display: inline-block; margin: 0 auto">
